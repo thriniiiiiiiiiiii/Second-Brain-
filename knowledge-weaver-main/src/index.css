@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -141,7 +141,7 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'DM Sans', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-feature-settings: 'ss01' on, 'ss02' on;
   }
 
@@ -187,7 +187,7 @@
 
 @layer utilities {
   .font-display {
-    font-family: 'Instrument Serif', Georgia, serif;
+    font-family: 'Outfit', sans-serif;
   }
 
   .text-balance {

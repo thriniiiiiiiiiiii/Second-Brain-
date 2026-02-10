@@ -2,7 +2,7 @@
 
 A specialized second brain application designed to weave together your notes, insights, and patterns using advanced AI analysis. This backend service powers the Knowledge Weaver frontend with a robust API, database management, and AI integration.
 
-## 🚀 Key Features
+## Key Features
 
 *   **Intelligent Note Management**: Create, read, update, and delete notes with AI-powered tagging and summarization.
 *   **Pattern Recognition**: Analyze your notes to discover recurring themes and insights over time.
@@ -10,7 +10,7 @@ A specialized second brain application designed to weave together your notes, in
 *   **Vector Search**: (Planned/In-progress) Semantic search using embeddings.
 *   **Robust Architecture**: Built with modern, type-safe technologies.
 
-## 🛠 Tech Stack
+## Tech Stack
 
 *   **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
 *   **Language**: [TypeScript](https://www.typescriptlang.org/)
@@ -21,7 +21,7 @@ A specialized second brain application designed to weave together your notes, in
     *   [Ollama SDK](https://www.npmjs.com/package/ollama)
     *   [Anthropic SDK](https://www.npmjs.com/package/@anthropic-ai/sdk)
 
-## 🏗 Architecture
+## Architecture
 
 The backend is structured to be modular and scalable:
 
@@ -33,7 +33,7 @@ The backend is structured to be modular and scalable:
     *   `scheduler.ts`: Manages background tasks.
 *   **`prisma/`**: Database schema definition and migration files.
 
-## 🔧 Setup Instructions
+## Setup Instructions
 
 ### Prerequisites
 
@@ -99,7 +99,7 @@ npm run dev
 
 The backend API will be available at `http://localhost:3000`.
 
-## 📝 API Endpoints
+## API Endpoints
 
 *   **`/api/notes`**: GET, POST
 *   **`/api/notes/[id]`**: GET, PUT, DELETE
