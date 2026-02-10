@@ -1,8 +1,8 @@
-run = "npm run dev"
+run = "npx turbo dev"
 
 [nix]
 channel = "stable-23_11"
 
 [deployment]
-run = "npm run dev"
+run = "npx turbo dev"
 deploymentTarget = "cloudrun"
