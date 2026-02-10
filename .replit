@@ -1,4 +1,4 @@
-run = "npx turbo dev"
+run = "npm install && npx turbo dev"
 
 [nix]
 channel = "stable-23_11"
@@ -7,5 +7,5 @@ channel = "stable-23_11"
 PORT = "8080"
 
 [deployment]
-run = "npx turbo dev"
+run = "npm install && npx turbo dev"
 deploymentTarget = "cloudrun"
