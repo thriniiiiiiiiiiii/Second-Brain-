@@ -3,6 +3,9 @@ run = "npx turbo dev"
 [nix]
 channel = "stable-23_11"
 
+[env]
+PORT = "8080"
+
 [deployment]
 run = "npx turbo dev"
 deploymentTarget = "cloudrun"
