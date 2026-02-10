@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Knowledge {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  summary   String?
+  embedding Float[] @default([])
+  type      String
+  tags      String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PatternRun {
+  id          String           @id @default(uuid())
+  status      String           @default("running")
+  totalNotes  Int              @default(0)
+  themesFound Int              @default(0)
+  error       String?
+  startedAt   DateTime         @default(now())
+  completedAt DateTime?
+  insights    PatternInsight[]
+}
+
+model PatternInsight {
+  id             String     @id @default(uuid())
+  theme          String
+  count          Int
+  insight        String
+  relatedNoteIds String[]
+  period         String
+  createdAt      DateTime   @default(now())
+  runId          String
+  run            PatternRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+}

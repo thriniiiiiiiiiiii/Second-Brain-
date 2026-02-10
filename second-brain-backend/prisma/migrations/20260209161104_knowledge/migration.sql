@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Knowledge" ADD COLUMN     "embedding" DOUBLE PRECISION[],
+ALTER COLUMN "tags" DROP DEFAULT,
+ALTER COLUMN "type" DROP DEFAULT;
