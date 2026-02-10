@@ -39,12 +39,17 @@ async function main() {
     console.log('Seeding samples...')
 
     for (const sample of samples) {
-        await prisma.knowledge.create({
-            data: sample
+        await prisma.knowledge.upsert({
+            where: { id: `sample-${sample.title.toLowerCase().replace(/\s+/g, '-')}` },
+            update: sample,
+            create: {
+                id: `sample-${sample.title.toLowerCase().replace(/\s+/g, '-')}`,
+                ...sample
+            }
         })
     }
 
-    console.log('Successfully seeded 5 sample notes!')
+    console.log('Successfully synced 5 sample notes!')
 }
 
 main()
