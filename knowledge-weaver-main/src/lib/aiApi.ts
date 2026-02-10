@@ -6,7 +6,8 @@
 
 import { toast } from "sonner";
 
-const API_BASE = "/api/ai";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const API_BASE = `${BASE_URL}/api/ai`;
 const PROVIDER_KEY = "knowledge-weaver-ai-provider";
 
 export type Message = {

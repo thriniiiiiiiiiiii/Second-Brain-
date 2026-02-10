@@ -2,11 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { AIProvider } from '@/lib/ai-provider';
 import { prisma } from '@/lib/db';
 
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': process.env.FRONTEND_URL || '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
-};
+import { corsHeaders } from '@/lib/cors';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,7 +11,7 @@ export async function POST(request: NextRequest) {
     if (!content) {
       return NextResponse.json(
         { error: 'Content required' },
-        { status: 400, headers: CORS_HEADERS }
+        { status: 400, headers: corsHeaders }
       );
     }
 
@@ -36,18 +32,18 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({ tags }, { headers: CORS_HEADERS });
+    return NextResponse.json({ tags }, { headers: corsHeaders });
   } catch (error: any) {
     console.error('Auto-tag error:', error);
     const status = error.status || 500;
     const message = error.message || 'Auto-tagging failed';
     return NextResponse.json(
       { error: message },
-      { status, headers: CORS_HEADERS }
+      { status, headers: corsHeaders }
     );
   }
 }
 
 export async function OPTIONS() {
-  return new NextResponse(null, { status: 200, headers: CORS_HEADERS });
+  return new NextResponse(null, { status: 200, headers: corsHeaders });
 }

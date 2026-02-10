@@ -2,10 +2,9 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
   ArrowRight, Sparkles, FileText, Search, MessageCircle, Globe,
-  Brain, Zap, Star, TrendingUp, Shield, Tag, Pin, Compass, Layers
+  Brain, Zap, Star, TrendingUp, Shield, Tag, Pin, Compass
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ModeToggle } from "@/components/mode-toggle";
 import { MagneticButton } from "@/components/ui/magnetic-button";
 import { GlassCard } from "@/components/ui/glass-card";
 import { GradientMesh } from "@/components/ui/gradient-mesh";
@@ -14,6 +13,7 @@ import { ParticleBackground } from "@/components/ui/particle-background";
 import { FloatingElement } from "@/components/ui/floating-element";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { Badge } from "@/components/ui/badge";
+import { Layout } from "@/components/layout/Layout";
 
 /* ───── Stagger animation config (fast) ───── */
 const container = {
@@ -22,7 +22,7 @@ const container = {
 };
 const child = {
   hidden: { opacity: 0, y: 12 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" as const } },
 };
 
 /* ───── Live demo card data ───── */
@@ -40,30 +40,11 @@ const typeEmoji = { note: "📝", link: "🔗", insight: "💡" };
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background relative overflow-x-hidden">
+    <Layout>
       {/* Background layers */}
       <GradientMesh className="opacity-50" />
       <ParticleBackground density={25} />
       <CursorSpotlight size={350} intensity={0.1} />
-
-      {/* ─── Nav ─── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <Link to="/" className="font-display text-xl italic text-display hover:scale-105 transition-transform">
-            Second Brain
-          </Link>
-          <div className="flex items-center gap-3 sm:gap-6">
-            <Link to="/docs" className="hidden sm:block text-sm text-body hover:text-display transition-colors">Docs</Link>
-            <Link to="/query" className="hidden sm:block text-sm text-body hover:text-display transition-colors">API</Link>
-            <ModeToggle />
-            <Link to="/dashboard">
-              <MagneticButton size="sm" className="rounded-full px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0 shadow-lg" strength={0.3}>
-                Open App <ArrowRight className="w-3.5 h-3.5 ml-1" />
-              </MagneticButton>
-            </Link>
-          </div>
-        </div>
-      </nav>
 
       {/* ═══════════ HERO ═══════════ */}
       <section className="relative min-h-[85vh] flex items-center justify-center pt-14">
@@ -77,7 +58,7 @@ const Index = () => {
 
           {/* Title */}
           <h1 className="font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl text-display leading-[1.05] mb-4 text-balance">
-            {["Your", "mind,"].map((word, i) => (
+            {["Your", "mind,", "extended."].map((word, i) => (
               <motion.span
                 key={word}
                 className="inline-block mr-3 sm:mr-4"
@@ -88,15 +69,6 @@ const Index = () => {
                 {word}
               </motion.span>
             ))}
-            <br />
-            <motion.em
-              className="gradient-text"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.2, type: "spring", stiffness: 200 }}
-            >
-              extended.
-            </motion.em>
           </h1>
 
           {/* Subtitle */}
@@ -114,7 +86,6 @@ const Index = () => {
           >
             <Link to="/dashboard">
               <MagneticButton
-                size="lg"
                 className="rounded-full px-8 gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0 shadow-lg hover:shadow-xl glow-primary"
                 strength={0.4}
               >
@@ -141,7 +112,7 @@ const Index = () => {
       </section>
 
       {/* ═══════════ LIVE PREVIEW ═══════════ */}
-      <section className="py-12 sm:py-16 px-4 sm:px-6 relative z-10">
+      <section className="py-16 sm:py-20 px-4 sm:px-6 relative z-10">
         <div className="max-w-5xl mx-auto">
           <ScrollReveal>
             <GlassCard tilt={false} glow={true} className="p-4 sm:p-6 md:p-8 overflow-hidden">
@@ -449,7 +420,6 @@ const Index = () => {
             </p>
             <Link to="/dashboard">
               <MagneticButton
-                size="lg"
                 className="rounded-full px-8 gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:shadow-2xl glow-primary"
                 strength={0.5}
               >
@@ -459,20 +429,7 @@ const Index = () => {
           </div>
         </ScrollReveal>
       </section>
-
-      {/* ─── Footer ─── */}
-      <footer className="border-t border-white/10 py-8 px-4 sm:px-6 relative z-10 glass">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="font-display italic text-sm text-muted-foreground">Second Brain — Your mind, extended.</span>
-          <div className="flex gap-6 text-sm text-muted-foreground">
-            <Link to="/dashboard" className="hover:text-display transition-colors">Dashboard</Link>
-            <Link to="/patterns" className="hover:text-display transition-colors">Patterns</Link>
-            <Link to="/docs" className="hover:text-display transition-colors">Docs</Link>
-            <Link to="/query" className="hover:text-display transition-colors">API</Link>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </Layout>
   );
 };
 

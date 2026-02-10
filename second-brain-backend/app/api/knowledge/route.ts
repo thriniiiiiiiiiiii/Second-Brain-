@@ -2,11 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { AIProvider } from "@/lib/ai-provider";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": process.env.FRONTEND_URL || "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-};
+import { corsHeaders } from "@/lib/cors";
 
 // Preflight request handler
 export async function OPTIONS() {
@@ -74,10 +70,10 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(item);
-  } catch (error) {
+  } catch (error: any) {
     console.error("POST /api/knowledge error:", error);
     return NextResponse.json(
-      { error: "Failed to create knowledge" },
+      { error: "Failed to create knowledge", details: error.message, stack: error.stack },
       { status: 500 }
     );
   }

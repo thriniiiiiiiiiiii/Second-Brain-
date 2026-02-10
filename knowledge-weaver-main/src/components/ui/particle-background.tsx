@@ -54,15 +54,20 @@ export const ParticleBackground: React.FC<ParticleBackgroundProps> = ({
 
         const initParticles = () => {
             particlesRef.current = [];
-            const particleCount = Math.floor((canvas.width * canvas.height) / (10000 / density));
+            // OPTIMIZATION: Reduced density divisor from 10000 to 40000 (4x fewer particles)
+            // This maintains the aesthetic while drastically improving performance
+            let particleCount = Math.floor((canvas.width * canvas.height) / (40000 / density));
+
+            // Hard cap to prevent lag on 4k screens
+            if (particleCount > 100) particleCount = 100;
 
             for (let i = 0; i < particleCount; i++) {
                 particlesRef.current.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
                     size: Math.random() * 2 + 1,
-                    speedX: (Math.random() - 0.5) * 0.5,
-                    speedY: (Math.random() - 0.5) * 0.5,
+                    speedX: (Math.random() - 0.5) * 0.3, // Slower for smoother feel
+                    speedY: (Math.random() - 0.5) * 0.3,
                     opacity: Math.random() * 0.5 + 0.2,
                 });
             }

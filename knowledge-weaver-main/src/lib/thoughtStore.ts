@@ -34,90 +34,86 @@ function saveLocal(thoughts: Thought[]) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(thoughts));
 }
 
-/* ─────────── API helpers (fire-and-forget sync) ─────────── */
+/* ─────────── API helpers ─────────── */
 
-const API = "/api";
-
-async function apiGet(): Promise<Thought[] | null> {
-    try {
-        const res = await fetch(`${API}/knowledge`);
-        if (!res.ok) return null;
-        const data = await res.json();
-        return data.map((item: any) => ({
-            ...item,
-            pinned: item.pinned ?? false,
-            createdAt: item.createdAt ?? new Date().toISOString(),
-        }));
-    } catch {
-        return null;
-    }
-}
-
-async function apiCreate(thought: Omit<Thought, "id" | "createdAt">): Promise<Thought | null> {
-    try {
-        const res = await fetch(`${API}/knowledge`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(thought),
-        });
-        if (!res.ok) return null;
-        const data = await res.json();
-        return { ...data, pinned: data.pinned ?? false };
-    } catch {
-        return null;
-    }
-}
-
-async function apiDelete(id: string): Promise<boolean> {
-    try {
-        const res = await fetch(`${API}/knowledge/${id}`, { method: "DELETE" });
-        return res.ok;
-    } catch {
-        return false;
-    }
-}
+import { getAllNotes, createNote, deleteNote } from "./knowledgeApi";
 
 /* ─────────── Public Store API ─────────── */
 
 export async function getAllThoughts(): Promise<Thought[]> {
-    // Try API first, fall back to localStorage
-    const apiData = await apiGet();
-    if (apiData && apiData.length > 0) {
+    try {
+        // Try API first
+        const apiData = await getAllNotes();
+
         // Merge with local pinned state
         const local = loadLocal();
         const pinnedIds = new Set(local.filter(t => t.pinned).map(t => t.id));
-        const merged = apiData.map(t => ({ ...t, pinned: pinnedIds.has(t.id) || t.pinned }));
+
+        const merged: Thought[] = apiData.map(note => ({
+            id: note.id,
+            title: note.title,
+            content: note.content,
+            type: (note.type as any) || "note",
+            tags: note.tags || [],
+            summary: note.summary || undefined,
+            sourceUrl: undefined, // Backend doesn't support yet
+            createdAt: note.createdAt,
+            pinned: pinnedIds.has(note.id)
+        }));
+
         saveLocal(merged);
         return merged;
+    } catch (e) {
+        console.warn("API sync failed, using local backup", e);
+        return loadLocal();
     }
-    return loadLocal();
 }
 
 export async function addThought(thought: Omit<Thought, "id" | "createdAt" | "pinned">): Promise<Thought> {
+    const tempId = "temp-" + Date.now() + Math.random().toString(36).slice(2, 6);
     const newThought: Thought = {
         ...thought,
-        id: Date.now().toString() + Math.random().toString(36).slice(2, 6),
+        id: tempId,
         pinned: false,
         createdAt: new Date().toISOString(),
     };
 
-    // Save locally immediately
+    // Save locally immediately (Optimistic UI)
     const all = loadLocal();
     all.unshift(newThought);
     saveLocal(all);
 
-    // Try to sync with API
-    const apiResult = await apiCreate(thought);
-    if (apiResult) {
+    // Sync with API
+    try {
+        const savedNote = await createNote({
+            title: thought.title,
+            content: thought.content,
+            type: thought.type,
+            tags: thought.tags
+        });
+
         // Update local ID with server ID
         const updated = loadLocal().map(t =>
-            t.id === newThought.id ? { ...apiResult, pinned: false } : t
+            t.id === tempId ? {
+                ...t,
+                id: savedNote.id,
+                createdAt: savedNote.createdAt,
+                summary: savedNote.summary || t.summary
+            } : t
         );
         saveLocal(updated);
-        return { ...apiResult, pinned: false };
-    }
 
-    return newThought;
+        return {
+            ...newThought,
+            id: savedNote.id,
+            createdAt: savedNote.createdAt,
+            summary: savedNote.summary || newThought.summary
+        };
+    } catch (e) {
+        console.error("Failed to save to API", e);
+        // Keep the local one with temp ID
+        return newThought;
+    }
 }
 
 export function togglePin(id: string): Thought[] {
@@ -142,7 +138,10 @@ export async function deleteThought(id: string): Promise<Thought[]> {
     const all = loadLocal();
     const updated = all.filter(t => t.id !== id);
     saveLocal(updated);
-    apiDelete(id); // fire-and-forget
+
+    // Fire and forget delete
+    deleteNote(id).catch(err => console.error("Failed to delete remote note", err));
+
     return updated;
 }
 

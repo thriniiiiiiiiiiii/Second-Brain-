@@ -15,6 +15,7 @@ import { GradientMesh } from "@/components/ui/gradient-mesh";
 import { CursorSpotlight } from "@/components/ui/cursor-spotlight";
 import { FloatingElement } from "@/components/ui/floating-element";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import { Footer } from "@/components/layout/Footer";
 import * as store from "@/lib/thoughtStore";
 import type { Thought } from "@/lib/thoughtStore";
 
@@ -44,30 +45,25 @@ const ThemeCloud = ({ items }: { items: Thought[] }) => {
 
     return (
         <GlassCard tilt={false} glow={true} className="p-6">
-            <div className="flex flex-wrap gap-3 justify-center">
-                {tagStats.map((stat, i) => {
+            <div className="flex flex-wrap gap-2 justify-start">
+                {tagStats.map((stat) => {
                     const intensity = stat.count / maxCount;
-                    const size = 14 + intensity * 14;
+                    // Discrete size tiers for cleaner look
+                    const sizeClass = intensity > 0.8 ? "px-4 py-2 text-base font-semibold" :
+                        intensity > 0.4 ? "px-3 py-1.5 text-sm font-medium" :
+                            "px-2.5 py-1 text-xs";
+
+                    const colorClass = intensity > 0.8 ? "bg-purple-500/20 text-purple-600 dark:text-purple-300 border-purple-500/30" :
+                        intensity > 0.4 ? "bg-blue-500/10 text-blue-600 dark:text-blue-300 border-blue-500/20" :
+                            "bg-white/5 text-muted-foreground border-white/10";
+
                     return (
-                        <motion.div
+                        <div
                             key={stat.tag}
-                            initial={{ scale: 0, opacity: 0, rotate: -10 }}
-                            animate={{ scale: 1, opacity: 1, rotate: 0 }}
-                            transition={{ delay: i * 0.06, type: "spring", stiffness: 200, damping: 12 }}
-                            whileHover={{ scale: 1.2, rotate: Math.random() > 0.5 ? 3 : -3 }}
-                            className="cursor-default"
+                            className={`rounded-full border transition-colors ${sizeClass} ${colorClass}`}
                         >
-                            <span
-                                className="font-display transition-all duration-300"
-                                style={{
-                                    fontSize: `${size}px`,
-                                    color: `hsl(${260 + intensity * 40}, ${60 + intensity * 20}%, ${50 + intensity * 20}%)`,
-                                    textShadow: intensity > 0.5 ? `0 0 ${intensity * 20}px rgba(139, 92, 246, ${intensity * 0.5})` : "none",
-                                }}
-                            >
-                                {stat.tag}
-                            </span>
-                        </motion.div>
+                            {stat.tag} <span className="opacity-50 ml-1 text-[0.8em]">×{stat.count}</span>
+                        </div>
                     );
                 })}
             </div>
@@ -273,7 +269,7 @@ const PatternDetective = () => {
 
             {/* Nav */}
             <nav className="sticky top-0 z-50 glass border-b border-white/10">
-                <div className="max-w-6xl mx-auto px-4 md:px-6 h-14 flex items-center justify-between">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <Link to="/dashboard">
                             <MagneticButton
@@ -284,7 +280,7 @@ const PatternDetective = () => {
                             </MagneticButton>
                         </Link>
                         <FloatingElement delay={0} duration={5}>
-                            <span className="font-display text-lg italic text-display">Pattern Detective</span>
+                            <span className="font-display text-xl italic text-display">Pattern Detective</span>
                         </FloatingElement>
                     </div>
                     <ModeToggle />
@@ -377,6 +373,7 @@ const PatternDetective = () => {
                     </div>
                 )}
             </div>
+            <Footer />
         </div>
     );
 };

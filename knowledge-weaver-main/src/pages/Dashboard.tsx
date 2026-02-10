@@ -20,6 +20,8 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { MagneticButton } from "@/components/ui/magnetic-button";
 import { GlassCard } from "@/components/ui/glass-card";
 import { GradientMesh } from "@/components/ui/gradient-mesh";
+import { Footer } from "@/components/layout/Footer";
+import { ParticleBackground } from "@/components/ui/particle-background";
 import { CursorSpotlight } from "@/components/ui/cursor-spotlight";
 import { FloatingElement } from "@/components/ui/floating-element";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
@@ -490,7 +492,7 @@ const FreshThoughts = ({ items }: { items: KnowledgeItem[] }) => {
         <h2 className="font-display text-lg text-display mb-3 flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-purple-400" /> Fresh Thoughts
         </h2>
-        <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide">
+        <div className="flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
           {recent.map((item) => {
             const Icon = typeIcons[item.type];
             return (
@@ -598,12 +600,11 @@ const EmergingPatterns = ({ items }: { items: KnowledgeItem[] }) => {
                   transition={{ delay: i * 0.05, type: "spring", stiffness: 300, damping: 15 }}
                 >
                   <Badge
-                    className="cursor-default transition-all duration-300"
+                    className="cursor-default transition-all duration-300 text-purple-700 dark:text-purple-300"
                     style={{
                       fontSize: `${Math.max(11, 11 + intensity * 6)}px`,
                       background: `rgba(139, 92, 246, ${0.1 + intensity * 0.2})`,
                       borderColor: `rgba(139, 92, 246, ${0.2 + intensity * 0.3})`,
-                      color: `rgba(196, 181, 253, ${0.6 + intensity * 0.4})`,
                     }}
                   >
                     {stat.tag} <span className="ml-1 opacity-60">×{stat.count}</span>
@@ -710,8 +711,9 @@ const Dashboard = () => {
         const summary = await aiApi.summarize(newItem.content);
         const updated = store.updateThought(newItem.id, { summary });
         setItems(updated);
-      } catch {
-        // Silent fail for auto-summarize
+      } catch (error) {
+        console.warn("Auto-summary failed:", error);
+        toast.error("Auto-summary paused (Rate Limit). Try manually later.");
       }
 
       // Auto-tag in the background
@@ -796,14 +798,15 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background relative overflow-x-hidden">
-      <GradientMesh className="opacity-30" />
-      <CursorSpotlight size={300} intensity={0.08} />
+      <GradientMesh className="opacity-40" />
+      <ParticleBackground density={15} />
+      <CursorSpotlight size={350} intensity={0.1} />
 
       {/* ───── Nav ───── */}
       <nav className="sticky top-0 z-50 glass border-b border-white/10">
-        <div className="max-w-6xl mx-auto px-4 md:px-6 h-14 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <FloatingElement delay={0} duration={5}>
-            <Link to="/" className="font-display text-lg italic text-display hover:scale-105 transition-transform">
+            <Link to="/" className="font-display text-xl italic text-display hover:scale-105 transition-transform">
               Second Brain
             </Link>
           </FloatingElement>
@@ -974,6 +977,7 @@ const Dashboard = () => {
           </motion.div>
         )}
       </AnimatePresence>
+      <Footer />
     </div>
   );
 };
