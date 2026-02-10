@@ -65,7 +65,7 @@ Create a `.env` file in the root directory (`second-brain-backend/.env`). You ca
 DATABASE_URL="postgresql://user:password@host:port/database?sslmode=require"
 
 # Frontend URL (for CORS)
-FRONTEND_URL="http://localhost:5173"
+FRONTEND_URL="http://localhost:8080"
 
 # AI Providers (Choose at least one)
 # Gemini (Recommended for speed/cost)
